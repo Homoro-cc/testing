@@ -2,7 +2,7 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, CallbackContext
 
 # Replace with your game URL
-GAME_URL = "https://your-game-hosting.com"
+GAME_URL = "https://homoro-cc.github.io/testing/"
 
 def start(update: Update, context: CallbackContext) -> None:
     """Sends a Play Game button."""
