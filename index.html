@@ -1,69 +1,61 @@
-<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Mobile App</title>
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   Animated Background with Logo and Buttons
+  </title>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;display=swap" rel="stylesheet"/>
   <style>
-    /* Reset default margin and padding */
-    * {
+   body {
+      font-family: 'Inter', sans-serif;
       margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+      height: 100vh;
+      overflow: hidden;
     }
-
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f2f2f2;
-      color: #333;
-      padding: 20px;
-      max-width: 430px;
-      margin: 0 auto;
+    /* Animated gradient background */
+    @keyframes gradientBG {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
     }
-
-    header {
-      background-color: #4CAF50;
-      color: white;
-      padding: 15px;
-      text-align: center;
-      border-radius: 10px;
-      margin-bottom: 20px;
-    }
-
-    button {
-      width: 100%;
-      padding: 15px;
-      margin: 10px 0;
-      font-size: 18px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #45a049;
-    }
-
-    p {
-      font-size: 18px;
-      margin-bottom: 15px;
-      line-height: 1.5;
+    .animated-bg {
+      background: linear-gradient(
+        270deg,
+        #3b0764,
+        #9d174d,
+        #f43f5e,
+        #9d174d,
+        #3b0764
+      );
+      background-size: 1000% 1000%;
+      animation: gradientBG 15s ease infinite;
     }
   </style>
-</head>
-<body>
+ </head>
+ <body class="animated-bg flex flex-col items-center justify-start min-h-screen relative">
 
-  <header>
-    <h1>Welcome to My App</h1>
-  </header>
+  <div class="w-40 h-40 rounded-full bg-white shadow-sm flex items-center justify-center absolute top-[25vh] left-1/2 -translate-x-1/2">
+   <img class="w-5/6 h-5/6 rounded-full object-contain" draggable="false" height="96" src="assets/logo.png" width="96"/>
+  </div>
 
-  <p>This is a mobile-friendly web app. You can add your content here.</p>
+  <div class="flex flex-col space-y-4 mt-[calc(35vh+8rem)] w-full max-w-xs px-6">
+   <button class="w-full py-4 rounded-full bg-gradient-to-r from-purple-800 via-pink-700 to-rose-500 text-white font-semibold text-lg shadow-lg hover:brightness-110 transition" type="button">
+    Sign In
+   </button>
+   <button class="w-full py-4 rounded-full bg-white text-purple-900 font-semibold text-lg shadow-lg hover:bg-gray-100 transition" type="button">
+    Register
+   </button>
+  </div>
 
-  <button onclick="alert('Button clicked!')">Click Me</button>
-
-  <p>Resize your screen to see how it adapts!</p>
-
-</body>
+ </body>
 </html>
