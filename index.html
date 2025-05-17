@@ -90,12 +90,21 @@
       color: #b91c1c; /* red-700 */
       font-weight: 700;
     }
+    /* Highlight hinted cells */
+    .hinted {
+      background-color: #dbeafe; /* blue-100 */
+      color: #1d4ed8; /* blue-700 */
+    }
+    /* Highlight selected cell */
+    .selected {
+      background-color: #e0e7ff; /* indigo-100 */
+    }
     /* Buttons container */
     .buttons-container {
       margin-top: 1.5rem;
       display: flex;
       gap: 1rem;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       justify-content: center;
       max-width: 450px;
       width: 100%;
@@ -104,137 +113,182 @@
     .modal-backdrop {
       background-color: rgba(0, 0, 0, 0.5);
     }
+    /* Stats container */
+    .stats-container {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 450px;
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+    /* Difficulty selector */
+    .difficulty-selector {
+      margin-bottom: 0.5rem;
+      width: 100%;
+      max-width: 450px;
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .difficulty-btn {
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-right: 0.5rem;
+      border: 2px solid transparent;
+      transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+      user-select: none;
+      background-color: white;
+      color: #4b5563;
+      min-width: 80px;
+      text-align: center;
+    }
+    .difficulty-btn.active {
+      background-color: #4f46e5;
+      color: white;
+      border-color: #4338ca;
+    }
+    .difficulty-btn:focus-visible {
+      outline: 2px solid #4f46e5;
+      outline-offset: 2px;
+    }
+    /* HR below difficulty buttons */
+    .difficulty-hr {
+      width: 100%;
+      max-width: 450px;
+      border: none;
+      border-top: 3px solid rgba(0,0,0,0.15);
+      margin-bottom: 1rem;
+    }
+    /* Submit, Hint, New Game, Guide buttons styling */
+    .action-btn {
+      flex: 1 1 0;
+      padding: 0.75rem 0;
+      border-radius: 0.5rem;
+      font-weight: 700;
+      font-size: 1.125rem;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: background-color 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s;
+      user-select: none;
+      text-align: center;
+      box-shadow: 0 4px 6px rgb(0 0 0 / 0.1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    #submitBtn {
+      background: linear-gradient(to right, #5b21b6, #db2777, #f43f5e);
+      color: white;
+      border-color: transparent;
+    }
+    #submitBtn:hover,
+    #submitBtn:focus-visible {
+      filter: brightness(1.1);
+      outline: none;
+      box-shadow: 0 0 8px #db2777;
+    }
+    #hintBtn,
+    #newGameBtn,
+    #guideBtn {
+      background-color: white;
+      color: #5b21b6;
+      border-color: #5b21b6;
+    }
+    #hintBtn:hover,
+    #newGameBtn:hover,
+    #guideBtn:hover {
+      background-color: #f3e8ff;
+      color: #6d28d9;
+      border-color: #6d28d9;
+      box-shadow: 0 0 8px #a78bfa;
+    }
+    #hintBtn:focus-visible,
+    #newGameBtn:focus-visible,
+    #guideBtn:focus-visible {
+      outline: 2px solid #6d28d9;
+      outline-offset: 2px;
+      box-shadow: 0 0 8px #a78bfa;
+    }
+    /* Responsive adjustments */
+    @media (max-width: 480px) {
+      .buttons-container {
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+      .difficulty-selector {
+        justify-content: space-around;
+      }
+      .difficulty-btn {
+        min-width: 70px;
+        font-size: 0.9rem;
+        padding: 0.4rem 0.8rem;
+      }
+      .stats-container {
+        font-size: 0.9rem;
+      }
+      .action-btn {
+        font-size: 1rem;
+        padding: 0.6rem 0;
+      }
+    }
   </style>
 </head>
 <body>
-  <table class="sudoku-grid" role="grid" aria-label="Sudoku puzzle" id="sudokuGrid">
+  <div class="difficulty-selector" role="group" aria-label="Select difficulty level">
+    <button id="easyBtn" class="difficulty-btn active" aria-label="Easy difficulty" type="button">Easy</button>
+    <button id="mediumBtn" class="difficulty-btn" aria-label="Medium difficulty" type="button">Medium</button>
+    <button id="hardBtn" class="difficulty-btn" aria-label="Hard difficulty" type="button">Hard</button>
+  </div>
+  <hr class="difficulty-hr" aria-hidden="true" />
+  
+  <div class="stats-container" aria-live="polite" aria-atomic="true">
+    <div id="timer" role="timer">Time: 00:00</div>
+    <div id="hintsRemaining">Hints: 3</div>
+  </div>
+
+  <table class="sudoku-grid" role="grid" aria-label="Sudoku puzzle" id="sudokuGrid" tabindex="0">
     <tbody>
-      <tr>
-        <td><input class="cell-input" type="number" min="1" max="9" value="5" disabled aria-label="Row 1 Column 1, number 5" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 1 Column 2" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" value="3" disabled aria-label="Row 1 Column 3, number 3" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 1 Column 4" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" value="7" disabled aria-label="Row 1 Column 5, number 7" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 1 Column 6" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 1 Column 7" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 1 Column 8" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" value="9" disabled aria-label="Row 1 Column 9, number 9" /></td>
-      </tr>
-      <tr>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 2 Column 1" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" value="7" disabled aria-label="Row 2 Column 2, number 7" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 2 Column 3" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" value="1" disabled aria-label="Row 2 Column 4, number 1" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 2 Column 5" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 2 Column 6" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" value="5" disabled aria-label="Row 2 Column 7, number 5" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 2 Column 8" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 2 Column 9" /></td>
-      </tr>
-      <tr>
-        <td><input class="cell-input" type="number" min="1" max="9" value="1" disabled aria-label="Row 3 Column 1, number 1" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 3 Column 2" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 3 Column 3" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 3 Column 4" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" value="9" disabled aria-label="Row 3 Column 5, number 9" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 3 Column 6" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 3 Column 7" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" value="6" disabled aria-label="Row 3 Column 8, number 6" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 3 Column 9" /></td>
-      </tr>
-      <tr>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 4 Column 1" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" value="9" disabled aria-label="Row 4 Column 2, number 9" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 4 Column 3" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 4 Column 4" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 4 Column 5" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" value="5" disabled aria-label="Row 4 Column 6, number 5" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 4 Column 7" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 4 Column 8" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" value="1" disabled aria-label="Row 4 Column 9, number 1" /></td>
-      </tr>
-      <tr>
-        <td><input class="cell-input" type="number" min="1" max="9" value="6" disabled aria-label="Row 5 Column 1, number 6" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 5 Column 2" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 5 Column 3" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" value="3" disabled aria-label="Row 5 Column 4, number 3" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 5 Column 5" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 5 Column 6" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 5 Column 7" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 5 Column 8" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" value="8" disabled aria-label="Row 5 Column 9, number 8" /></td>
-      </tr>
-      <tr>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 6 Column 1" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 6 Column 2" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" value="7" disabled aria-label="Row 6 Column 3, number 7" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 6 Column 4" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 6 Column 5" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 6 Column 6" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 6 Column 7" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" value="2" disabled aria-label="Row 6 Column 8, number 2" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 6 Column 9" /></td>
-      </tr>
-      <tr>
-        <td><input class="cell-input" type="number" min="1" max="9" value="3" disabled aria-label="Row 7 Column 1, number 3" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 7 Column 2" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 7 Column 3" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" value="8" disabled aria-label="Row 7 Column 4, number 8" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 7 Column 5" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 7 Column 6" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 7 Column 7" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 7 Column 8" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" value="6" disabled aria-label="Row 7 Column 9, number 6" /></td>
-      </tr>
-      <tr>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 8 Column 1" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" value="6" disabled aria-label="Row 8 Column 2, number 6" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 8 Column 3" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 8 Column 4" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" value="1" disabled aria-label="Row 8 Column 5, number 1" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 8 Column 6" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 8 Column 7" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 8 Column 8" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 8 Column 9" /></td>
-      </tr>
-      <tr>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 9 Column 1" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 9 Column 2" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" value="4" disabled aria-label="Row 9 Column 3, number 4" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 9 Column 4" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 9 Column 5" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 9 Column 6" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" value="1" disabled aria-label="Row 9 Column 7, number 1" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" aria-label="Row 9 Column 8" /></td>
-        <td><input class="cell-input" type="number" min="1" max="9" value="8" disabled aria-label="Row 9 Column 9, number 8" /></td>
-      </tr>
+      <!-- Rows will be generated by JavaScript -->
     </tbody>
   </table>
 
-  <div class="buttons-container">
+  <div class="buttons-container" role="group" aria-label="Game actions">
     <button
       id="submitBtn"
-      class="px-6 py-3 rounded-full bg-gradient-to-r from-purple-800 via-pink-700 to-rose-500 text-white font-semibold text-lg shadow-lg hover:brightness-110 transition"
+      class="action-btn"
       type="button"
       aria-label="Submit Sudoku solution"
     >
-      Submit
+      <i class="fas fa-check-circle" aria-hidden="true"></i> Submit
     </button>
     <button
       id="hintBtn"
-      class="px-6 py-3 rounded-full bg-white text-purple-900 font-semibold text-lg shadow-lg hover:bg-gray-100 transition"
+      class="action-btn"
       type="button"
       aria-label="Get a hint for Sudoku puzzle"
     >
-      Hint
+      <i class="fas fa-lightbulb" aria-hidden="true"></i> Hint
+    </button>
+    <button
+      id="newGameBtn"
+      class="action-btn"
+      type="button"
+      aria-label="Start a new game"
+    >
+      <i class="fas fa-redo-alt" aria-hidden="true"></i> Restart
     </button>
     <button
       id="guideBtn"
-      class="px-6 py-3 rounded-full bg-white text-purple-900 font-semibold text-lg shadow-lg hover:bg-gray-100 transition"
+      class="action-btn"
       type="button"
       aria-label="Show Sudoku guide"
     >
-      Guide
+      <i class="fas fa-book" aria-hidden="true"></i> Guide
     </button>
   </div>
 
@@ -258,268 +312,500 @@
       <h2
         id="modalTitle"
         class="text-2xl font-bold mb-4 text-center text-purple-900"
+        tabindex="0"
       ></h2>
       <div id="modalDesc" class="text-gray-700 whitespace-pre-line"></div>
+      <div class="flex justify-center mt-4">
+        <button
+          id="modalOkBtn"
+          class="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+          aria-label="OK"
+          type="button"
+        >
+          OK
+        </button>
+      </div>
       <button
         id="modalCloseBtn"
         class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 focus:outline-none"
         aria-label="Close modal"
+        type="button"
       >
-        <i class="fas fa-times fa-lg"></i>
+        <i class="fas fa-times fa-lg" aria-hidden="true"></i>
       </button>
     </div>
   </div>
 
   <script>
     (() => {
-      // The solution for the puzzle (row-major order)
-      const solution = [
-        [5, 4, 3, 6, 7, 2, 8, 1, 9],
-        [2, 7, 9, 1, 8, 4, 5, 6, 3],
-        [1, 8, 6, 5, 9, 3, 7, 6, 4], // Note: row 3 col 8 is 6 in puzzle and solution, but repeated 6? Fix below
-        [4, 9, 2, 7, 6, 5, 3, 8, 1],
-        [6, 1, 5, 3, 2, 8, 9, 7, 8], // Note: last cell 8 repeated? Fix below
-        [8, 3, 7, 9, 4, 1, 6, 2, 5],
-        [3, 5, 1, 8, 7, 6, 4, 9, 6],
-        [7, 6, 4, 2, 1, 9, 1, 5, 7], // Note: repeated 1 and 7? Fix below
-        [9, 2, 4, 4, 5, 7, 1, 3, 8], // Note: repeated 4? Fix below
-      ];
-
-      // The above solution has errors (repeated numbers in rows). Let's fix it with a valid solution for the given puzzle:
-
-      // Puzzle given:
-      // Row 1: 5 _ 3 _ 7 _ _ _ 9
-      // Row 2: _ 7 _ 1 _ _ 5 _ _
-      // Row 3: 1 _ _ _ 9 _ _ 6 _
-      // Row 4: _ 9 _ _ _ 5 _ _ 1
-      // Row 5: 6 _ _ 3 _ _ _ _ 8
-      // Row 6: _ _ 7 _ _ _ _ 2 _
-      // Row 7: 3 _ _ 8 _ _ _ _ 6
-      // Row 8: _ 6 _ _ 1 _ _ _ _
-      // Row 9: _ _ 4 _ _ _ 1 _ 8
-
-      // Valid solution for this puzzle (verified):
-      const validSolution = [
-        [5, 6, 3, 4, 7, 2, 8, 9, 1],
-        [4, 7, 9, 1, 6, 8, 5, 3, 2],
-        [1, 8, 2, 5, 9, 3, 7, 6, 4],
-        [7, 9, 6, 2, 8, 5, 4, 1, 3],
-        [6, 1, 5, 3, 4, 7, 9, 2, 8],
-        [8, 3, 7, 9, 1, 6, 0, 2, 5], // 0 means empty cell, but we want full solution, fix below
-      ];
-      // Row 6, col 7 is empty in puzzle, so solution must have a number there:
-      validSolution[5][6] = 1;
-      // Continue rows 7-9:
-      validSolution.push(
-        [3, 2, 1, 8, 5, 9, 6, 4, 7],
-        [9, 6, 8, 7, 1, 4, 2, 5, 0], // last cell empty? Fix below
-        [2, 5, 4, 6, 3, 0, 1, 7, 8]
-      );
-      // Fix last row 8 col 9 and row 9 col 6:
-      validSolution[7][8] = 3;
-      validSolution[8][5] = 9;
-
-      // Final valid solution:
-      // Row 7: 3 2 1 8 5 9 6 4 7
-      // Row 8: 9 6 8 7 1 4 2 5 3
-      // Row 9: 2 5 4 6 3 9 1 7 8
-
-      // Store references to inputs
-      const grid = document.getElementById("sudokuGrid");
-      const inputs = Array.from(grid.querySelectorAll("input.cell-input"));
-
-      // Map inputs to 2D array for easier access
-      const inputMatrix = [];
-      for (let r = 0; r < 9; r++) {
-        inputMatrix[r] = [];
-        for (let c = 0; c < 9; c++) {
-          inputMatrix[r][c] = inputs[r * 9 + c];
+      // Sudoku game class
+      class SudokuGame {
+        constructor() {
+          this.board = Array(9).fill().map(() => Array(9).fill(0));
+          this.solution = Array(9).fill().map(() => Array(9).fill(0));
+          this.puzzle = Array(9).fill().map(() => Array(9).fill(0));
+          this.difficulty = 'easy'; // 'easy', 'medium', 'hard'
+          this.hintsRemaining = 3;
+          this.startTime = null;
+          this.timerInterval = null;
+          this.selectedCell = null;
+          
+          // DOM elements
+          this.grid = document.getElementById("sudokuGrid");
+          this.timerDisplay = document.getElementById("timer");
+          this.hintsDisplay = document.getElementById("hintsRemaining");
+          this.modal = document.getElementById("modal");
+          this.modalTitle = document.getElementById("modalTitle");
+          this.modalDesc = document.getElementById("modalDesc");
+          this.modalCloseBtn = document.getElementById("modalCloseBtn");
+          this.modalOkBtn = document.getElementById("modalOkBtn");
+          this.modalBackdrop = document.getElementById("modalBackdrop");
+          this.submitBtn = document.getElementById("submitBtn");
+          this.hintBtn = document.getElementById("hintBtn");
+          this.newGameBtn = document.getElementById("newGameBtn");
+          this.guideBtn = document.getElementById("guideBtn");
+          this.easyBtn = document.getElementById("easyBtn");
+          this.mediumBtn = document.getElementById("mediumBtn");
+          this.hardBtn = document.getElementById("hardBtn");
+          
+          // Initialize game
+          this.initGrid();
+          this.initEventListeners();
+          this.newGame();
         }
-      }
-
-      // Modal elements
-      const modal = document.getElementById("modal");
-      const modalTitle = document.getElementById("modalTitle");
-      const modalDesc = document.getElementById("modalDesc");
-      const modalCloseBtn = document.getElementById("modalCloseBtn");
-      const modalBackdrop = document.getElementById("modalBackdrop");
-
-      // Buttons
-      const submitBtn = document.getElementById("submitBtn");
-      const hintBtn = document.getElementById("hintBtn");
-      const guideBtn = document.getElementById("guideBtn");
-
-      // Keep track of hints given (cells to fill)
-      // We'll find empty cells in puzzle and reveal them one by one on hint
-      const emptyCells = [];
-      for (let r = 0; r < 9; r++) {
-        for (let c = 0; c < 9; c++) {
-          if (inputMatrix[r][c].disabled === false) {
-            emptyCells.push({ r, c });
+        
+        initGrid() {
+          const tbody = this.grid.querySelector('tbody');
+          tbody.innerHTML = '';
+          
+          for (let r = 0; r < 9; r++) {
+            const row = document.createElement('tr');
+            for (let c = 0; c < 9; c++) {
+              const cell = document.createElement('td');
+              const input = document.createElement('input');
+              input.className = 'cell-input';
+              input.type = 'number';
+              input.min = '1';
+              input.max = '9';
+              input.setAttribute('aria-label', `Row ${r+1} Column ${c+1}`);
+              input.dataset.row = r;
+              input.dataset.col = c;
+              input.autocomplete = "off";
+              input.spellcheck = false;
+              cell.appendChild(input);
+              row.appendChild(cell);
+            }
+            tbody.appendChild(row);
+          }
+          
+          this.inputs = Array.from(this.grid.querySelectorAll("input.cell-input"));
+          this.inputMatrix = [];
+          for (let r = 0; r < 9; r++) {
+            this.inputMatrix[r] = [];
+            for (let c = 0; c < 9; c++) {
+              this.inputMatrix[r][c] = this.inputs[r * 9 + c];
+            }
           }
         }
-      }
-
-      // Shuffle emptyCells to give hints in random order
-      function shuffle(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [array[i], array[j]] = [array[j], array[i]];
+        
+        initEventListeners() {
+          // Input validation
+          this.inputs.forEach(input => {
+            input.addEventListener('input', (e) => {
+              let val = e.target.value;
+              // Remove non-digit characters
+              val = val.replace(/[^1-9]/g, '');
+              if (val.length > 1) val = val.charAt(0);
+              e.target.value = val;
+              // Remove wrong highlight on input change
+              e.target.classList.remove('wrong');
+              
+              // Update board state
+              const row = parseInt(e.target.dataset.row);
+              const col = parseInt(e.target.dataset.col);
+              this.board[row][col] = val ? parseInt(val) : 0;
+            });
+            
+            input.addEventListener('focus', (e) => {
+              // Clear previous selection
+              if (this.selectedCell) {
+                this.selectedCell.classList.remove('selected');
+              }
+              // Set new selection
+              e.target.classList.add('selected');
+              this.selectedCell = e.target;
+            });
+            
+            input.addEventListener('blur', (e) => {
+              e.target.classList.remove('selected');
+              if (this.selectedCell === e.target) {
+                this.selectedCell = null;
+              }
+            });
+          });
+          
+          // Keyboard navigation
+          document.addEventListener('keydown', (e) => {
+            if (!this.selectedCell) return;
+            
+            const row = parseInt(this.selectedCell.dataset.row);
+            const col = parseInt(this.selectedCell.dataset.col);
+            let newRow = row;
+            let newCol = col;
+            
+            switch(e.key) {
+              case 'ArrowUp': newRow = Math.max(0, row - 1); break;
+              case 'ArrowDown': newRow = Math.min(8, row + 1); break;
+              case 'ArrowLeft': newCol = Math.max(0, col - 1); break;
+              case 'ArrowRight': newCol = Math.min(8, col + 1); break;
+              default: return;
+            }
+            
+            if (newRow !== row || newCol !== col) {
+              this.selectedCell.classList.remove('selected');
+              const newCell = this.inputMatrix[newRow][newCol];
+              newCell.classList.add('selected');
+              newCell.focus();
+              this.selectedCell = newCell;
+            }
+          });
+          
+          // Buttons
+          this.submitBtn.addEventListener('click', () => this.checkSolution());
+          this.hintBtn.addEventListener('click', () => this.giveHint());
+          this.newGameBtn.addEventListener('click', () => this.newGame());
+          this.guideBtn.addEventListener('click', () => this.showGuide());
+          
+          // Difficulty buttons
+          this.easyBtn.addEventListener('click', () => this.setDifficulty('easy'));
+          this.mediumBtn.addEventListener('click', () => this.setDifficulty('medium'));
+          this.hardBtn.addEventListener('click', () => this.setDifficulty('hard'));
+          
+          // Modal
+          this.modalCloseBtn.addEventListener('click', () => this.closeModal());
+          this.modalOkBtn.addEventListener('click', () => this.closeModal());
+          this.modalBackdrop.addEventListener('click', () => this.closeModal());
+          window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !this.modal.classList.contains('hidden')) {
+              this.closeModal();
+            }
+          });
         }
-      }
-      shuffle(emptyCells);
-
-      // Show modal helper
-      function showModal(title, content) {
-        modalTitle.textContent = title;
-        modalDesc.textContent = content;
-        modal.classList.remove("hidden");
-        modal.classList.add("flex");
-        // Trap focus inside modal for accessibility
-        modalCloseBtn.focus();
-      }
-
-      // Close modal helper
-      function closeModal() {
-        modal.classList.add("hidden");
-        modal.classList.remove("flex");
-      }
-
-      modalCloseBtn.addEventListener("click", closeModal);
-      modalBackdrop.addEventListener("click", closeModal);
-      window.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && !modal.classList.contains("hidden")) {
-          closeModal();
+        
+        setDifficulty(difficulty) {
+          this.difficulty = difficulty;
+          this.easyBtn.classList.remove('active');
+          this.mediumBtn.classList.remove('active');
+          this.hardBtn.classList.remove('active');
+          
+          switch(difficulty) {
+            case 'easy':
+              this.easyBtn.classList.add('active');
+              this.hintsRemaining = 5;
+              break;
+            case 'medium':
+              this.mediumBtn.classList.add('active');
+              this.hintsRemaining = 3;
+              break;
+            case 'hard':
+              this.hardBtn.classList.add('active');
+              this.hintsRemaining = 1;
+              break;
+          }
+          
+          this.hintsDisplay.textContent = `Hints: ${this.hintsRemaining}`;
+          this.newGame();
         }
-      });
-
-      // Guide content
-      const guideContent = `How to play Sudoku:
+        
+        newGame() {
+          // Stop previous timer
+          if (this.timerInterval) {
+            clearInterval(this.timerInterval);
+          }
+          
+          // Generate new puzzle
+          this.generatePuzzle();
+          
+          // Reset timer
+          this.startTime = new Date();
+          this.updateTimer();
+          this.timerInterval = setInterval(() => this.updateTimer(), 1000);
+          
+          // Update hints display
+          this.hintsDisplay.textContent = `Hints: ${this.hintsRemaining}`;
+          
+          // Clear any highlights
+          this.clearHighlights();
+        }
+        
+        generatePuzzle() {
+          // Generate a solved board
+          this.generateSolvedBoard(0, 0);
+          
+          // Make a copy for the solution
+          for (let r = 0; r < 9; r++) {
+            for (let c = 0; c < 9; c++) {
+              this.solution[r][c] = this.board[r][c];
+            }
+          }
+          
+          // Create puzzle by removing numbers based on difficulty
+          let cellsToRemove;
+          switch(this.difficulty) {
+            case 'easy': cellsToRemove = 40; break;
+            case 'medium': cellsToRemove = 50; break;
+            case 'hard': cellsToRemove = 60; break;
+            default: cellsToRemove = 40;
+          }
+          
+          // Create puzzle copy
+          for (let r = 0; r < 9; r++) {
+            for (let c = 0; c < 9; c++) {
+              this.puzzle[r][c] = this.board[r][c];
+            }
+          }
+          
+          // Remove cells
+          let removed = 0;
+          while (removed < cellsToRemove) {
+            const r = Math.floor(Math.random() * 9);
+            const c = Math.floor(Math.random() * 9);
+            if (this.puzzle[r][c] !== 0) {
+              this.puzzle[r][c] = 0;
+              removed++;
+            }
+          }
+          
+          // Update UI
+          this.updateBoard();
+        }
+        
+        generateSolvedBoard(row, col) {
+          if (row === 9) {
+            return true; // Successfully filled all cells
+          }
+          
+          if (col === 9) {
+            return this.generateSolvedBoard(row + 1, 0);
+          }
+          
+          if (this.board[row][col] !== 0) {
+            return this.generateSolvedBoard(row, col + 1);
+          }
+          
+          // Try numbers 1-9 in random order
+          const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+          this.shuffleArray(numbers);
+          
+          for (const num of numbers) {
+            if (this.isValidPlacement(row, col, num)) {
+              this.board[row][col] = num;
+              
+              if (this.generateSolvedBoard(row, col + 1)) {
+                return true;
+              }
+              
+              this.board[row][col] = 0; // Backtrack
+            }
+          }
+          
+          return false; // Trigger backtracking
+        }
+        
+        isValidPlacement(row, col, num) {
+          // Check row
+          for (let c = 0; c < 9; c++) {
+            if (this.board[row][c] === num) return false;
+          }
+          
+          // Check column
+          for (let r = 0; r < 9; r++) {
+            if (this.board[r][col] === num) return false;
+          }
+          
+          // Check 3x3 box
+          const boxRow = Math.floor(row / 3) * 3;
+          const boxCol = Math.floor(col / 3) * 3;
+          for (let r = boxRow; r < boxRow + 3; r++) {
+            for (let c = boxCol; c < boxCol + 3; c++) {
+              if (this.board[r][c] === num) return false;
+            }
+          }
+          
+          return true;
+        }
+        
+        shuffleArray(array) {
+          for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+          }
+        }
+        
+        updateBoard() {
+          // Reset board state
+          for (let r = 0; r < 9; r++) {
+            for (let c = 0; c < 9; c++) {
+              this.board[r][c] = this.puzzle[r][c];
+              const input = this.inputMatrix[r][c];
+              input.value = this.puzzle[r][c] ? this.puzzle[r][c].toString() : '';
+              input.disabled = this.puzzle[r][c] !== 0;
+              input.classList.remove('wrong', 'hinted');
+            }
+          }
+        }
+        
+        updateTimer() {
+          const now = new Date();
+          const elapsed = Math.floor((now - this.startTime) / 1000);
+          const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
+          const seconds = (elapsed % 60).toString().padStart(2, '0');
+          this.timerDisplay.textContent = `Time: ${minutes}:${seconds}`;
+        }
+        
+        checkSolution() {
+          // Clear previous highlights
+          this.clearHighlights();
+          
+          let allFilled = true;
+          let allCorrect = true;
+          const wrongCells = [];
+          
+          for (let r = 0; r < 9; r++) {
+            for (let c = 0; c < 9; c++) {
+              const input = this.inputMatrix[r][c];
+              const val = input.value.trim();
+              
+              if (input.disabled) continue;
+              
+              if (val === '') {
+                allFilled = false;
+                continue;
+              }
+              
+              const num = parseInt(val);
+              if (num !== this.solution[r][c]) {
+                allCorrect = false;
+                wrongCells.push(input);
+              }
+            }
+          }
+          
+          if (!allFilled) {
+            this.showModal(
+              "Incomplete Puzzle",
+              "Please fill all cells before submitting your solution."
+            );
+            return;
+          }
+          
+          if (allCorrect) {
+            // Stop timer
+            clearInterval(this.timerInterval);
+            this.showModal(
+              "Congratulations!",
+              "You've successfully solved the Sudoku puzzle!"
+            );
+          } else {
+            // Highlight wrong cells
+            wrongCells.forEach(cell => cell.classList.add('wrong'));
+            this.showModal(
+              "Incorrect Solution",
+              "Some numbers are incorrect. Please check the highlighted cells in red."
+            );
+          }
+        }
+        
+        giveHint() {
+          if (this.hintsRemaining <= 0) {
+            this.showModal(
+              "No Hints Left",
+              "You've used all your hints. Try solving it on your own!"
+            );
+            return;
+          }
+          
+          // Find empty cells
+          const emptyCells = [];
+          for (let r = 0; r < 9; r++) {
+            for (let c = 0; c < 9; c++) {
+              if (!this.inputMatrix[r][c].disabled && this.inputMatrix[r][c].value === '') {
+                emptyCells.push({ r, c });
+              }
+            }
+          }
+          
+          if (emptyCells.length === 0) {
+            this.showModal(
+              "No Empty Cells",
+              "All cells are filled. You can submit your solution."
+            );
+            return;
+          }
+          
+          // Choose random empty cell
+          const randomIndex = Math.floor(Math.random() * emptyCells.length);
+          const { r, c } = emptyCells[randomIndex];
+          const input = this.inputMatrix[r][c];
+          
+          // Fill with correct value
+          input.value = this.solution[r][c];
+          input.classList.add('hinted');
+          this.board[r][c] = this.solution[r][c];
+          
+          // Decrement hints
+          this.hintsRemaining--;
+          this.hintsDisplay.textContent = `Hints: ${this.hintsRemaining}`;
+          
+          this.showModal(
+            "Hint",
+            `The correct number for row ${r+1}, column ${c+1} is ${this.solution[r][c]}.`
+          );
+        }
+        
+        showGuide() {
+          const guideContent = `How to play Sudoku:
 
 - The goal is to fill the 9x9 grid with digits so that each column, each row, and each of the nine 3x3 subgrids contain all of the digits from 1 to 9.
 - You cannot repeat a number in any row, column, or 3x3 box.
 - Use logic and elimination to deduce the correct numbers.
 - Some cells are pre-filled and cannot be changed.
-- Use the Hint button to reveal the next correct number.
+- Use the Hint button to reveal the next correct number (limited uses).
 - When you think you have completed the puzzle, press Submit to check your solution.
 
+Difficulty Levels:
+- Easy: More numbers filled in (5 hints)
+- Medium: Balanced difficulty (3 hints)
+- Hard: Fewer numbers filled in (1 hint)
+
 Good luck and have fun!`;
-
-      guideBtn.addEventListener("click", () => {
-        showModal("Sudoku Guide", guideContent);
-      });
-
-      // Submit button logic
-      submitBtn.addEventListener("click", () => {
-        // Clear previous wrong highlights
-        inputs.forEach((input) => input.classList.remove("wrong"));
-
-        let allFilled = true;
-        let allCorrect = true;
-        const wrongCells = [];
-
-        for (let r = 0; r < 9; r++) {
-          for (let c = 0; c < 9; c++) {
-            const input = inputMatrix[r][c];
-            const val = input.value.trim();
-            if (val === "") {
-              allFilled = false;
-              continue;
-            }
-            const num = Number(val);
-            if (num !== validSolution[r][c]) {
-              allCorrect = false;
-              wrongCells.push(input);
-            }
-          }
+          
+          this.showModal("Sudoku Guide", guideContent);
         }
-
-        if (!allFilled) {
-          showModal(
-            "Incomplete",
-            "Please fill all cells before submitting your solution."
-          );
-          return;
+        
+        showModal(title, content) {
+          this.modalTitle.textContent = title;
+          this.modalDesc.textContent = content;
+          this.modal.classList.remove('hidden');
+          this.modal.classList.add('flex');
+          this.modalOkBtn.focus();
         }
-
-        if (allCorrect) {
-          showModal("Game Over", "Congratulations! You Win!");
-        } else {
-          // Highlight wrong cells
-          wrongCells.forEach((cell) => cell.classList.add("wrong"));
-          showModal(
-            "Not Win",
-            "Some numbers are incorrect. Please check the highlighted cells in red."
-          );
+        
+        closeModal() {
+          this.modal.classList.add('hidden');
+          this.modal.classList.remove('flex');
         }
-      });
-
-      // Hint button logic
-      hintBtn.addEventListener("click", () => {
-        // Find next empty or incorrect cell to fill as hint
-        // Priority: empty cells first, then incorrect cells
-        // Clear previous wrong highlights
-        inputs.forEach((input) => input.classList.remove("wrong"));
-
-        // Find first empty cell
-        let hintGiven = false;
-        for (let i = 0; i < emptyCells.length; i++) {
-          const { r, c } = emptyCells[i];
-          const input = inputMatrix[r][c];
-          if (input.value.trim() === "") {
-            input.value = validSolution[r][c];
-            input.classList.add("hinted");
-            // Remove this cell from emptyCells so hint won't repeat
-            emptyCells.splice(i, 1);
-            hintGiven = true;
-            showModal(
-              "Hint",
-              `Here's a hint: The cell at row ${r + 1}, column ${
-                c + 1
-              } is ${validSolution[r][c]}.`
-            );
-            break;
-          }
+        
+        clearHighlights() {
+          this.inputs.forEach(input => {
+            input.classList.remove('wrong', 'hinted');
+          });
         }
-        if (hintGiven) return;
-
-        // If no empty cells, check for incorrect cells and fix one
-        for (let r = 0; r < 9; r++) {
-          for (let c = 0; c < 9; c++) {
-            const input = inputMatrix[r][c];
-            if (input.disabled) continue;
-            const val = input.value.trim();
-            if (val === "") continue;
-            if (Number(val) !== validSolution[r][c]) {
-              input.value = validSolution[r][c];
-              input.classList.add("hinted");
-              showModal(
-                "Hint",
-                `Here's a hint: The cell at row ${r + 1}, column ${
-                  c + 1
-                } should be ${validSolution[r][c]}.`
-              );
-              return;
-            }
-          }
-        }
-
-        // If no hints available
-        showModal("Hint", "No more hints available. You are close to solving!");
-      });
-
-      // Input validation: only allow digits 1-9
-      inputs.forEach((input) => {
-        if (input.disabled) return;
-        input.addEventListener("input", (e) => {
-          let val = e.target.value;
-          // Remove non-digit characters
-          val = val.replace(/[^1-9]/g, "");
-          if (val.length > 1) val = val.charAt(0);
-          e.target.value = val;
-          // Remove wrong highlight on input change
-          e.target.classList.remove("wrong");
-        });
+      }
+      
+      // Initialize the game when DOM is loaded
+      document.addEventListener('DOMContentLoaded', () => {
+        new SudokuGame();
       });
     })();
   </script>
